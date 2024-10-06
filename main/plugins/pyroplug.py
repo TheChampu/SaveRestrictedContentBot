@@ -42,7 +42,7 @@ async def get_msg(userbot, client, bot, sender, edit_id, msg_link, i):
                 chat_id = int(chat)
                 msg = await userbot.get_messages(chat_id, msg_id)
             else:
-                messages = await userbot.get_history(chat, limit=1000)
+                messages = await bot.iter_messages(chat, limit=1000)
                 for msg in messages:
                     if msg.id == msg_id:
                         break
