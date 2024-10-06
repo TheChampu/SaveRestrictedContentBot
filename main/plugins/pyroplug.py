@@ -38,7 +38,17 @@ async def get_msg(userbot, client, bot, sender, edit_id, msg_link, i):
                 chat_id = msg_link.split("/")[-2]
         file = ""
         try:
-            msg = await userbot.get_messages(chat, msg_id)
+            if chat.startswith('-100'):
+                chat_id = int(chat)
+                msg = await userbot.get_messages(chat_id, msg_id)
+            else:
+                messages = await userbot.get_history(chat, limit=1000)
+                for msg in messages:
+                    if msg.id == msg_id:
+                        break
+                else:
+                    await client.edit_message_text(sender, edit_id, f"Failed to save: {msg_link}\n\nError: Message not found")
+                    return
             if msg.media:
                 if msg.media==MessageMediaType.WEB_PAGE:
                     edit = await client.edit_message_text(sender, edit_id, "Cloning.")
