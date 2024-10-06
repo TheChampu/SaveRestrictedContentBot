@@ -44,6 +44,11 @@ async def get_msg(userbot, client, bot, sender, edit_id, msg_link, i):
                    chat = chat_id
         file = ""
         try:
+            if isinstance(chat, int):
+               msg = await userbot.get_messages(chat, msg_id)
+            else:
+               msg = await userbot.get_messages(chat, msg_id, chat_type="channel")
+ 
             msg = await userbot.get_messages(chat, msg_id)
             if msg.media:
                 if msg.media==MessageMediaType.WEB_PAGE:
