@@ -35,7 +35,13 @@ async def get_msg(userbot, client, bot, sender, edit_id, msg_link, i):
         if 't.me/b/' in msg_link:
             chat = str(msg_link.split("/")[-2])
         else:
-            chat = int('-100' + str(msg_link.split("/")[-2]))
+                chat_id = msg_link.split("/")[-2]
+                if chat_id.startswith('-100'):
+                   chat_id = chat_id.replace('-100', '')
+                if chat_id.isdigit():
+                   chat = int('-100' + chat_id)
+                else:
+                   chat = chat_id
         file = ""
         try:
             msg = await userbot.get_messages(chat, msg_id)
