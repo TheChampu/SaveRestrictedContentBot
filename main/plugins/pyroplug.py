@@ -117,38 +117,33 @@ async def get_msg(userbot, client, bot, sender, edit_id, msg_link, i):
             
             elif msg.media==MessageMediaType.PHOTO:
                 await edit.edit("Uploading photo.")
-                await bot.send_file(sender, file, caption=caption)
+                if caption is not None and len(caption) > 1024:
+                    caption_parts = [caption[i:i+1024] for i in range(0, len(caption), 1024)]
+                    for part in caption_parts:
+                        await client.send_message(sender, part)
+                    else:
+                        await client.send_message(sender, caption)
+                    await bot.send_file(sender, file)
             else:
                 thumb_path=thumbnail(sender)
                 if caption is not None and len(caption) > 1024:
                     # Split the caption into multiple messages
                     caption_parts = [caption[i:i+1024] for i in range(0, len(caption), 1024)]
                     for part in caption_parts:
-                        await client.send_document(
-                            sender,
-                            file, 
-                            caption=part,
-                            thumb=thumb_path,
-                            progress=progress_for_pyrogram,
-                            progress_args=(
+                        await client.send_message(sender, part)
+                else:
+                    await client.send_message(sender, caption)
+                await client.send_document(
+                        sender,
+                        file, 
+                        caption=part,
+                        thumb=thumb_path,
+                        progress=progress_for_pyrogram,
+                        progress_args=(
                                 client,
                                 '**UPLOADING:**\n',
                                 edit,
                                 time.time()
-                            )
-                        )
-                else:
-                    await client.send_document(
-                        sender,
-                        file, 
-                        caption=caption,
-                        thumb=thumb_path,
-                        progress=progress_for_pyrogram,
-                        progress_args=(
-                            client,
-                            '**UPLOADING:**\n',
-                            edit,
-                            time.time()
                         )
                     )
             try:
